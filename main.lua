@@ -7,6 +7,10 @@ function love.load()
     cellSize = boardSize / 3
     cellsPlayed = 0
     gameOver = false
+    crossPoints = {
+        start = { x = 0, y = 0 },
+        finish = { x = 0, y = 0 },
+    }
 
     board = {
         { '', '', '' },
@@ -49,8 +53,16 @@ function love.update()
     if cellsPlayed > 4 and not gameOver then
         if board[1][1] ~= '' and board[1][1] == board[2][2] and board[2][2] == board[3][3] then
             winner = board[1][1]
+            crossPoints.start.x = 0
+            crossPoints.start.y = 0
+            crossPoints.finish.x = boardSize
+            crossPoints.finish.y = boardSize
         elseif board[1][3] ~= '' and board[1][3] == board[2][2] and board[2][2] == board[3][1] then
             winner = board[1][3]
+            crossPoints.start.x = boardSize
+            crossPoints.start.y = boardSize
+            crossPoints.finish.x = 0
+            crossPoints.finish.y = 0
         else
             for i = 1, #board do
                 if board[i][1] ~= '' and board[i][1] == board[i][2] and board[i][2] == board[i][3] then
@@ -115,4 +127,10 @@ function O(x, y)
     love.graphics.setLineWidth(37)
 
     love.graphics.circle('line', x, y, 90)
+end
+
+function crossWin(start, finish)
+    love.graphics.setLineWidth(27)
+
+    love.graphics.line(start.x, start.y, finish.x, finish.y)
 end
