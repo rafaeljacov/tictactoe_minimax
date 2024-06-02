@@ -1,22 +1,22 @@
-_G.love = require("love")
+love = require("love")
 
 function love.load()
-    _G.currentPlayer = 'X'
-    _G.winner = ''
-    _G.boardSize = 900
-    _G.cellSize = boardSize / 3
-    _G.cellsPlayed = 0
-    _G.soundPlayed = false
+    currentPlayer = 'X'
+    winner = ''
+    boardSize = 900
+    cellSize = boardSize / 3
+    cellsPlayed = 0
+    soundPlayed = false
 
-    _G.board = {
+    board = {
         { '', '', '' },
         { '', '', '' },
         { '', '', '' },
     }
 
-    _G.clickSound = love.audio.newSource('assets/ball_tap.wav', 'static')
-    _G.winnerSound = love.audio.newSource('assets/winner.wav', 'static')
-    _G.drawSound = love.audio.newSource('assets/draw.wav', 'static')
+    clickSound = love.audio.newSource('assets/ball_tap.wav', 'static')
+    winnerSound = love.audio.newSource('assets/winner.wav', 'static')
+    drawSound = love.audio.newSource('assets/draw.wav', 'static')
 
     love.graphics.setBackgroundColor(153 / 255, 236 / 255, 247 / 255)
     love.window.setMode(boardSize, boardSize)
@@ -45,29 +45,31 @@ function love.mousepressed(x, y, button, _, _)
     end
 end
 
-function love.update(dt)
-    if board[1][1] == board[2][2] and board[2][2] == board[3][3] then
-        winner = board[1][1]
-    elseif board[1][3] == board[2][2] and board[2][2] == board[3][1] then
-        winner = board[1][3]
-    else
-        for i = 1, #board do
-            if board[i][1] == board[i][2] and board[i][2] == board[i][3] then
-                winner = board[i][1]
-                break
-            elseif board[1][i] == board[2][i] and board[2][i] == board[3][i] then
-                winner = board[1][i]
-                break
+function love.update()
+    if cellsPlayed > 4 and cellsPlayed < 9 then
+        if board[1][1] == board[2][2] and board[2][2] == board[3][3] then
+            winner = board[1][1]
+        elseif board[1][3] == board[2][2] and board[2][2] == board[3][1] then
+            winner = board[1][3]
+        else
+            for i = 1, #board do
+                if board[i][1] == board[i][2] and board[i][2] == board[i][3] then
+                    winner = board[i][1]
+                    break
+                elseif board[1][i] == board[2][i] and board[2][i] == board[3][i] then
+                    winner = board[1][i]
+                    break
+                end
             end
         end
-    end
 
-    if winner ~= '' and not soundPlayed then
-        love.audio.play(winnerSound)
-        soundPlayed = true
-    elseif cellsPlayed == 9 and not soundPlayed then
-        love.audio.play(drawSound)
-        soundPlayed = true
+        if winner ~= '' and not soundPlayed then
+            love.audio.play(winnerSound)
+            soundPlayed = true
+        elseif cellsPlayed == 9 and not soundPlayed then
+            love.audio.play(drawSound)
+            soundPlayed = true
+        end
     end
 end
 
