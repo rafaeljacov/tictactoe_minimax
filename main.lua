@@ -1,4 +1,4 @@
-love = require("love")
+local tictactoe = require('tictactoe')
 
 function love.load()
     currentPlayer = 'X'
@@ -119,43 +119,14 @@ function love.draw()
     for i, row in ipairs(board) do
         for j, val in ipairs(row) do
             if val == 'X' then
-                X(baseX + (offset * (j - 1)), baseX + (offset * (i - 1)))
+                tictactoe.X(baseX + (offset * (j - 1)), baseX + (offset * (i - 1)))
             elseif val == 'O' then
-                O(baseO + (offset * (j - 1)), baseO + (offset * (i - 1)))
+                tictactoe.O(baseO + (offset * (j - 1)), baseO + (offset * (i - 1)))
             end
         end
     end
 
     if gameOver then
-        crossWin(crossPoints.start, crossPoints.finish)
+        tictactoe.crossWin(crossPoints.start, crossPoints.finish)
     end
-end
-
--- draw X
-function X(x, y)
-    local offset = 160
-
-    love.graphics.setColor(200 / 255, 21 / 255, 30 / 255)
-    love.graphics.setLineWidth(37)
-
-    love.graphics.line(x, y, x + offset, y + offset)
-    love.graphics.line(x + offset, y, x, y + offset)
-end
-
--- draw O
-function O(x, y)
-    love.graphics.setColor(15 / 255, 79 / 255, 242 / 255)
-    love.graphics.setLineWidth(37)
-
-    love.graphics.circle('line', x, y, 80)
-end
-
-function crossWin(start, finish)
-    love.graphics.setLineWidth(20)
-    love.graphics.setColor(34 / 255, 43 / 255, 54 / 255)
-
-    local currentX = start.x + (finish.x - start.x) * crossPoints.progress
-    local currentY = start.y + (finish.y - start.y) * crossPoints.progress
-
-    love.graphics.line(start.x, start.y, currentX, currentY)
 end
