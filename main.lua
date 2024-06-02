@@ -14,9 +14,9 @@ function love.load()
         { '', '', '' },
     }
 
-    clickSound = love.audio.newSource('assets/ball_tap.wav', 'static')
+    playSound = love.audio.newSource('assets/ball_tap.wav', 'static')
     winnerSound = love.audio.newSource('assets/winner.wav', 'static')
-    drawSound = love.audio.newSource('assets/draw.wav', 'static')
+    tieSound = love.audio.newSource('assets/draw.wav', 'static')
 
     love.graphics.setBackgroundColor(153 / 255, 236 / 255, 247 / 255)
     love.window.setMode(boardSize, boardSize)
@@ -39,14 +39,14 @@ function love.mousepressed(x, y, button, _, _)
                 currentPlayer = 'X'
             end
 
-            love.audio.play(clickSound)
+            love.audio.play(playSound)
             cellsPlayed = cellsPlayed + 1
         end
     end
 end
 
 function love.update()
-    if cellsPlayed > 4 and cellsPlayed < 9 then
+    if cellsPlayed > 4 then
         if board[1][1] == board[2][2] and board[2][2] == board[3][3] then
             winner = board[1][1]
         elseif board[1][3] == board[2][2] and board[2][2] == board[3][1] then
@@ -66,10 +66,10 @@ function love.update()
         if winner ~= '' and not soundPlayed then
             love.audio.play(winnerSound)
             soundPlayed = true
+        elseif cellsPlayed == 9 and not soundPlayed then
+            love.audio.play(tieSound)
+            soundPlayed = true
         end
-    elseif cellsPlayed == 9 and not soundPlayed then
-        love.audio.play(drawSound)
-        soundPlayed = true
     end
 end
 
