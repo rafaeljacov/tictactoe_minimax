@@ -47,16 +47,16 @@ end
 
 function love.update()
     if cellsPlayed > 4 and not gameOver then
-        if board[1][1] == board[2][2] and board[2][2] == board[3][3] then
+        if board[1][1] ~= '' and board[1][1] == board[2][2] and board[2][2] == board[3][3] then
             winner = board[1][1]
-        elseif board[1][3] == board[2][2] and board[2][2] == board[3][1] then
+        elseif board[1][3] ~= '' and board[1][3] == board[2][2] and board[2][2] == board[3][1] then
             winner = board[1][3]
         else
             for i = 1, #board do
-                if board[i][1] == board[i][2] and board[i][2] == board[i][3] then
+                if board[i][1] ~= '' and board[i][1] == board[i][2] and board[i][2] == board[i][3] then
                     winner = board[i][1]
                     break
-                elseif board[1][i] == board[2][i] and board[2][i] == board[3][i] then
+                elseif board[1][i] ~= '' and board[1][i] == board[2][i] and board[2][i] == board[3][i] then
                     winner = board[1][i]
                     break
                 end
@@ -80,6 +80,7 @@ function love.draw()
     love.graphics.setColor(0, 0, 0)
     love.graphics.setLineWidth(7)
 
+    -- Dividers
     for i = 1, 2 do
         love.graphics.line(i * cellSize, 0, i * cellSize, boardSize)
         love.graphics.line(0, i * cellSize, boardSize, i * cellSize)
