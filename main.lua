@@ -6,7 +6,7 @@ function love.load()
     boardSize = 900
     cellSize = boardSize / 3
     cellsPlayed = 0
-    soundPlayed = false
+    gameOver = false
 
     board = {
         { '', '', '' },
@@ -46,7 +46,7 @@ function love.mousepressed(x, y, button, _, _)
 end
 
 function love.update()
-    if cellsPlayed > 4 then
+    if cellsPlayed > 4 and not gameOver then
         if board[1][1] == board[2][2] and board[2][2] == board[3][3] then
             winner = board[1][1]
         elseif board[1][3] == board[2][2] and board[2][2] == board[3][1] then
@@ -63,12 +63,12 @@ function love.update()
             end
         end
 
-        if winner ~= '' and not soundPlayed then
+        if winner ~= '' then
             love.audio.play(winnerSound)
-            soundPlayed = true
-        elseif cellsPlayed == 9 and not soundPlayed then
+            gameOver = true
+        elseif cellsPlayed == 9 then
             love.audio.play(tieSound)
-            soundPlayed = true
+            gameOver = true
         end
     end
 end
