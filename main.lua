@@ -101,7 +101,7 @@ function love.update()
 end
 
 function love.draw()
-    local baseX = 60
+    local baseX = 67
     local baseO = 145
 
     love.graphics.setColor(0, 0, 0)
