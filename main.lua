@@ -66,10 +66,10 @@ function love.update()
         if winner ~= '' and not soundPlayed then
             love.audio.play(winnerSound)
             soundPlayed = true
-        elseif cellsPlayed == 9 and not soundPlayed then
-            love.audio.play(drawSound)
-            soundPlayed = true
         end
+    elseif cellsPlayed == 9 and not soundPlayed then
+        love.audio.play(drawSound)
+        soundPlayed = true
     end
 end
 
