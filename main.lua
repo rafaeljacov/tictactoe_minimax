@@ -1,14 +1,16 @@
 local tictactoe = require('tictactoe')
 local ai = require('minimax')
 
+local gameState = tictactoe.gameState
+
 function love.load()
-    MAX = 'X'
-    MIN = 'O'
+    winner = gameState.winner
+    cellsPlayed = gameState.cellsPlayed
+    MAX = gameState.MAX
+    MIN = gameState.MIN
     currentPlayer = MAX
-    winner = ''
     boardSize = 900
     cellSize = boardSize / 3
-    cellsPlayed = 0
     gameOver = false
     crossLine = {
         start = { x = 0, y = 0 },
@@ -44,26 +46,17 @@ function love.mousepressed(x, y, button, _, _)
 
             if currentPlayer == 'X' then
                 currentPlayer = 'O'
-            else
-                currentPlayer = 'X'
+            -- else
+            --     currentPlayer = 'X'
             end
 
             love.audio.play(playSound)
             cellsPlayed = cellsPlayed + 1
         end
-    elseif currentPlayer == MIN then
-        ai.minimax(board, MIN)
     end
 end
 
 function love.update(dt)
-    if currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
-        local move = ai.minimax(board, MIN, 0)
-        board[move.row][move.col] = MIN
-        currentPlayer = MAX
-        cellsPlayed = cellsPlayed + 1
-    end
-
     if cellsPlayed > 4 and not gameOver then
         local offset = 27
         local base = (cellSize / 2) - 4
@@ -111,6 +104,14 @@ function love.update(dt)
         if crossLine.progress > 1 then
             crossLine.progress = 1
         end
+    end
+
+    -- AI Playing
+    if currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
+        local move = ai.minimax(board, MIN, 0)
+        board[move.row][move.col] = MIN
+        currentPlayer = MAX
+        cellsPlayed = cellsPlayed + 1
     end
 end
 

@@ -1,4 +1,11 @@
-local tictactoe = {}
+tictactoe = {}
+
+tictactoe.gameState = {
+    MAX = 'X',
+    MIN = 'O',
+    cellsPlayed = 0,
+    winner = ''
+}
 
 -- draw X
 function tictactoe.X(x, y)

@@ -1,40 +1,32 @@
 ---@diagnostic disable: cast-local-type
+local gameState = require('tictactoe').gameState
+
 ai = {}
 
-function ai.moves(board)
+local MAX = gameState.MAX
+local MIN = gameState.MIN
+
+local function getMoves(board)
     local moves = {}
     for i = 1, 3 do
         for j = 1, 3 do
             if board[i][j] == '' then
-                table.insert(moves, { row = i, col = j })
+                if true then
+                    table.insert(moves, { row = i, col = j })
+                else
+                    -- insert moves in random order
+                    local pos = math.random(1, #moves)
+                    math.randomseed(os.time())
+                    table.insert(moves, pos, { row = i, col = j })
+                end
             end
         end
     end
     return moves
 end
 
-function ai.simulateMove(board, move, player)
-    local newBoard = {
-        { '', '', '' },
-        { '', '', '' },
-        { '', '', '' },
-    }
-
-    -- Copy Board
-    for i = 1, 3 do
-        for j = 1, 3 do
-            newBoard[i][j] = board[i][j]
-        end
-    end
-
-    -- Play the current player's move
-    newBoard[move.row][move.col] = player
-
-    return newBoard
-end
-
-function ai.boardState(board)
-    function getValue(row, col)
+local function boardState(board)
+    local function getValue(row, col)
         if board[row][col] == MAX then
             return 1
         elseif board[row][col] == MIN then
@@ -42,16 +34,21 @@ function ai.boardState(board)
         end
     end
 
-    local state = {}
+    local state = {
+        isTerminal = false
+    }
+
     -- Check if there's a winner
     if board[1][1] ~= '' and board[1][1] == board[2][2] and board[2][2] == board[3][3] then
-        state.value = getValue(1, 1)
+        state.value = getValue(2, 2)
         state.isTerminal = true
+        return state
     elseif board[1][3] ~= '' and board[1][3] == board[2][2] and board[2][2] == board[3][1] then
-        state.value = getValue(1, 3)
+        state.value = getValue(2, 2)
         state.isTerminal = true
+        return state
     else
-        for i = 1, #board do
+        for i = 1, 3 do
             if board[i][1] ~= '' and board[i][1] == board[i][2] and board[i][2] == board[i][3] then
                 state.value = getValue(i, 1)
                 state.isTerminal = true
@@ -64,29 +61,26 @@ function ai.boardState(board)
         end
     end
 
-    local filledCellsCount = 0
+    -- check if tie
+    local filledCells = 0
     for _, row in ipairs(board) do
         for _, cell in ipairs(row) do
             if cell ~= '' then
-                filledCellsCount = filledCellsCount + 1
+                filledCells = filledCells + 1
             end
         end
     end
 
-    -- check if tie
-    if filledCellsCount == 9 then
+    if filledCells == 9 then
         state.value = 0
         state.isTerminal = true
-    else
-        state.isTerminal = false
     end
-
     return state
 end
 
 function ai.minimax(board, player, depth)
-    local state = ai.boardState(board)
-    local bestMove = nil
+    local state = boardState(board)
+    local bestMove
 
     if state.isTerminal then
         return state.value
@@ -95,8 +89,11 @@ function ai.minimax(board, player, depth)
     if player == MAX then
         local value = -math.huge
 
-        for _, move in ipairs(ai.moves(board)) do
-            local nextVal = ai.minimax(ai.simulateMove(board, move, MAX), MIN, depth + 1)
+        for _, move in ipairs(getMoves(board)) do
+            board[move.row][move.col] = MAX
+            local nextVal = ai.minimax(board, MIN, depth + 1)
+
+            board[move.row][move.col] = ''
             if nextVal > value then
                 value = nextVal
                 bestMove = move
@@ -111,8 +108,11 @@ function ai.minimax(board, player, depth)
     elseif player == MIN then
         local value = math.huge
 
-        for _, move in ipairs(ai.moves(board)) do
-            local nextVal = ai.minimax(ai.simulateMove(board, move, MIN), MAX, depth + 1)
+        for _, move in ipairs(getMoves(board)) do
+            board[move.row][move.col] = MIN
+            local nextVal = ai.minimax(board, MAX, depth + 1)
+
+            board[move.row][move.col] = ''
             if nextVal < value then
                 value = nextVal
                 bestMove = move
