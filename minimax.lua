@@ -1,7 +1,7 @@
 ---@diagnostic disable: cast-local-type
 local gameState = require('tictactoe').gameState
 
-ai = {}
+local ai = {}
 
 local MAX = gameState.MAX
 local MIN = gameState.MIN
@@ -11,14 +11,7 @@ local function getMoves(board)
     for i = 1, 3 do
         for j = 1, 3 do
             if board[i][j] == '' then
-                if #moves > 1 then
-                    table.insert(moves, { row = i, col = j })
-                else
-                    -- insert moves in random order
-                    local pos = math.random(1, #moves)
-                    math.randomseed(os.time())
-                    table.insert(moves, pos, { row = i, col = j })
-                end
+                table.insert(moves, { row = i, col = j })
             end
         end
     end
@@ -28,9 +21,9 @@ end
 local function boardState(board)
     local function getValue(row, col)
         if board[row][col] == MAX then
-            return 1
+            return 10
         elseif board[row][col] == MIN then
-            return -1
+            return -10
         end
     end
 
@@ -95,7 +88,7 @@ function ai.minimax(board, player, depth)
 
             board[move.row][move.col] = ''
             if nextVal > value then
-                value = nextVal
+                value = nextVal - depth
                 bestMove = move
             end
         end
@@ -114,7 +107,7 @@ function ai.minimax(board, player, depth)
 
             board[move.row][move.col] = ''
             if nextVal < value then
-                value = nextVal
+                value = nextVal + depth
                 bestMove = move
             end
         end
