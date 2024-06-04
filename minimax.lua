@@ -11,7 +11,7 @@ local function getMoves(board)
     for i = 1, 3 do
         for j = 1, 3 do
             if board[i][j] == '' then
-                if true then
+                if #moves > 1 then
                     table.insert(moves, { row = i, col = j })
                 else
                     -- insert moves in random order

@@ -44,8 +44,8 @@ function love.mousepressed(x, y, button, _, _)
             -- Place the current player's marker
             board[row][col] = currentPlayer
 
-            if currentPlayer == 'X' then
-                currentPlayer = 'O'
+            if currentPlayer == MAX then
+                currentPlayer = MIN
             -- else
             --     currentPlayer = 'X'
             end
