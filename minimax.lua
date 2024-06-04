@@ -11,7 +11,13 @@ local function getMoves(board)
     for i = 1, 3 do
         for j = 1, 3 do
             if board[i][j] == '' then
-                table.insert(moves, { row = i, col = j })
+                if #moves > 1 then
+                    math.randomseed(os.time())
+                    local pos = math.random(1, #moves)
+                    table.insert(moves, pos, { row = i, col = j })
+                else
+                    table.insert(moves, { row = i, col = j })
+                end
             end
         end
     end
