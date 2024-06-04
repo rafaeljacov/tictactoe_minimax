@@ -1,14 +1,14 @@
 local tictactoe = require('tictactoe')
 local ai = require('minimax')
 
-local gameState = tictactoe.gameState
+local gameDef = tictactoe.gameDef
 
 function love.load()
-    winner = gameState.winner
-    cellsPlayed = gameState.cellsPlayed
-    MAX = gameState.MAX
-    MIN = gameState.MIN
-    currentPlayer = MAX
+    winner = gameDef.winner
+    cellsPlayed = 0
+    MAX = gameDef.MAX
+    MIN = gameDef.MIN
+    currentPlayer = 'X'
     boardSize = 900
     cellSize = boardSize / 3
     gameOver = false
@@ -44,8 +44,8 @@ function love.mousepressed(x, y, button, _, _)
             -- Place the current player's marker
             board[row][col] = currentPlayer
 
-            if currentPlayer == MAX then
-                currentPlayer = MIN
+            if currentPlayer == 'X' then
+                currentPlayer = 'O'
             -- else
             --     currentPlayer = 'X'
             end

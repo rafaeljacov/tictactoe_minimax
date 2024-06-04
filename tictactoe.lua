@@ -1,9 +1,8 @@
 tictactoe = {}
 
-tictactoe.gameState = {
+tictactoe.gameDef = {
     MAX = 'X',
     MIN = 'O',
-    cellsPlayed = 0,
     winner = ''
 }
 
