@@ -30,7 +30,7 @@ function love.load()
     tieSound = love.audio.newSource('assets/draw.wav', 'static')
 
     love.graphics.setBackgroundColor(153 / 255, 236 / 255, 247 / 255)
-    love.window.setMode(boardSize, boardSize)
+    love.window.setMode(boardSize + 700, boardSize)
 end
 
 function love.mousepressed(x, y, button, _, _)
@@ -123,7 +123,7 @@ function love.draw()
     love.graphics.setLineWidth(7)
 
     -- Dividers
-    for i = 1, 2 do
+    for i = 1, 3 do
         love.graphics.line(i * cellSize, 0, i * cellSize, boardSize)
         love.graphics.line(0, i * cellSize, boardSize, i * cellSize)
     end
@@ -141,5 +141,23 @@ function love.draw()
 
     if gameOver then
         tictactoe.crossWin(crossLine.start, crossLine.finish)
+    end
+end
+
+function restartGame()
+    winner = ''
+    cellsPlayed = 0
+    currentPlayer = 'X'
+    gameOver = false
+    crossLine.start.x = 0
+    crossLine.start.y = 0
+    crossLine.finish.x = 0
+    crossLine.finish.y = 0
+    crossLine.progress = 0
+
+    for _, row in ipairs(board) do
+        for j = 1, 3 do
+            row[j] = ''
+        end
     end
 end
