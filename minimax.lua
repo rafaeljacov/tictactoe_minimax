@@ -1,10 +1,10 @@
 ---@diagnostic disable: cast-local-type
-local gameState = require('tictactoe').gameState
+local gameDef = require('tictactoe').gameDef
 
 local ai = {}
 
-local MAX = gameState.MAX
-local MIN = gameState.MIN
+local MAX = gameDef.MAX
+local MIN = gameDef.MIN
 
 local function getMoves(board)
     local moves = {}
