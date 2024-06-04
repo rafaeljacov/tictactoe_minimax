@@ -23,8 +23,8 @@ function tictactoe.crossWin(start, finish)
     love.graphics.setLineWidth(20)
     love.graphics.setColor(34 / 255, 43 / 255, 54 / 255)
 
-    local currentX = start.x + (finish.x - start.x) * crossPoints.progress
-    local currentY = start.y + (finish.y - start.y) * crossPoints.progress
+    local currentX = start.x + (finish.x - start.x) * crossLine.progress
+    local currentY = start.y + (finish.y - start.y) * crossLine.progress
 
     love.graphics.line(start.x, start.y, currentX, currentY)
 end
