@@ -1,13 +1,12 @@
 local tictactoe = require('tictactoe')
 local ai = require('minimax')
-
-local gameDef = tictactoe.gameDef
+local players = tictactoe.players
 
 function love.load()
-    winner = gameDef.winner
+    winner = ''
     cellsPlayed = 0
-    MAX = gameDef.MAX
-    MIN = gameDef.MIN
+    MAX = players.MAX
+    MIN = players.MIN
     currentPlayer = 'X'
     boardSize = 900
     cellSize = boardSize / 3
@@ -25,9 +24,9 @@ function love.load()
         { '', '', '' },
     }
 
-    playSound = love.audio.newSource('assets/ball_tap.wav', 'static')
-    winnerSound = love.audio.newSource('assets/winner.wav', 'static')
-    tieSound = love.audio.newSource('assets/draw.wav', 'static')
+    playSound = love.audio.newSource('assets/sound/ball_tap.wav', 'static')
+    winnerSound = love.audio.newSource('assets/sound/winner.wav', 'static')
+    tieSound = love.audio.newSource('assets/sound/draw.wav', 'static')
 
     love.graphics.setBackgroundColor(153 / 255, 236 / 255, 247 / 255)
     love.window.setMode(boardSize + 700, boardSize)

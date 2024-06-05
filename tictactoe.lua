@@ -1,9 +1,8 @@
 tictactoe = {}
 
-tictactoe.gameDef = {
+tictactoe.players = {
     MAX = 'X',
     MIN = 'O',
-    winner = ''
 }
 
 -- draw X
