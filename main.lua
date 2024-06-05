@@ -8,7 +8,7 @@ function love.load()
             restart = 0,
             aiPlay = 0
         },
-        enemyIsAi = false,
+        enemyIsAi = true,
     }
     winner = ''
     cellsPlayed = 0
@@ -40,7 +40,7 @@ function love.load()
 end
 
 function love.mousepressed(x, y, button, _, _)
-    if button == 1 and not game.enemyIsAi and winner == '' then
+    if (button == 1 and winner == '') and (not game.enemyIsAi or currentPlayer  == 'X') then
         -- Calculate the row and column clicked
         local row = math.floor(y / cellSize) + 1
         local col = math.floor(x / cellSize) + 1
@@ -53,7 +53,7 @@ function love.mousepressed(x, y, button, _, _)
             if currentPlayer == 'X' then
                 currentPlayer = 'O'
             elseif not game.enemyIsAi then
-                    currentPlayer = 'X'
+                currentPlayer = 'X'
             end
 
             love.audio.play(playSound)
@@ -135,7 +135,7 @@ function love.draw()
     love.graphics.setLineWidth(7)
 
     -- Dividers
-    for i = 1, 3 do
+    for i = 0, 3 do
         love.graphics.line(i * cellSize, 0, i * cellSize, boardSize)
         love.graphics.line(0, i * cellSize, boardSize, i * cellSize)
     end
