@@ -3,6 +3,13 @@ local ai = require('minimax')
 local players = tictactoe.players
 
 function love.load()
+    game = {
+        timers = {
+            restart = 0,
+            aiPlay = 0
+        },
+        enemyIsAi = false,
+    }
     winner = ''
     cellsPlayed = 0
     MAX = players.MAX
@@ -33,7 +40,7 @@ function love.load()
 end
 
 function love.mousepressed(x, y, button, _, _)
-    if button == 1 and currentPlayer == MAX and winner == '' then
+    if button == 1 and not game.enemyIsAi and winner == '' then
         -- Calculate the row and column clicked
         local row = math.floor(y / cellSize) + 1
         local col = math.floor(x / cellSize) + 1
@@ -45,8 +52,8 @@ function love.mousepressed(x, y, button, _, _)
 
             if currentPlayer == 'X' then
                 currentPlayer = 'O'
-            -- else
-            --     currentPlayer = 'X'
+            elseif not game.enemyIsAi then
+                    currentPlayer = 'X'
             end
 
             love.audio.play(playSound)
@@ -103,14 +110,20 @@ function love.update(dt)
         if crossLine.progress > 1 then
             crossLine.progress = 1
         end
+        restartGame(dt)
     end
 
     -- AI Playing
-    if currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
-        local move = ai.minimax(board, MIN, 0)
-        board[move.row][move.col] = MIN
-        currentPlayer = MAX
-        cellsPlayed = cellsPlayed + 1
+    if game.enemyIsAi and currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
+        game.timers.aiPlay = game.timers.aiPlay + dt
+
+        if game.timers.aiPlay > 0.75 then
+            local move = ai.minimax(board, MIN, 0)
+            board[move.row][move.col] = MIN
+            currentPlayer = MAX
+            cellsPlayed = cellsPlayed + 1
+            game.timers.aiPlay = 0
+        end
     end
 end
 
@@ -143,20 +156,23 @@ function love.draw()
     end
 end
 
-function restartGame()
-    winner = ''
-    cellsPlayed = 0
-    currentPlayer = 'X'
-    gameOver = false
-    crossLine.start.x = 0
-    crossLine.start.y = 0
-    crossLine.finish.x = 0
-    crossLine.finish.y = 0
-    crossLine.progress = 0
+function restartGame(dt)
+    game.timers.restart = game.timers.restart + dt
+    if game.timers.restart > 2 then
+        winner = ''
+        cellsPlayed = 0
+        gameOver = false
+        crossLine.start.x = 0
+        crossLine.start.y = 0
+        crossLine.finish.x = 0
+        crossLine.finish.y = 0
+        crossLine.progress = 0
 
-    for _, row in ipairs(board) do
-        for j = 1, 3 do
-            row[j] = ''
+        for _, row in ipairs(board) do
+            for j = 1, 3 do
+                row[j] = ''
+            end
         end
+        game.timers.restart = 0
     end
 end
