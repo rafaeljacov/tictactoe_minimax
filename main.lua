@@ -1,5 +1,11 @@
+local utils = require('utils')
+local colors = utils.colors
+local fonts = utils.fonts
+local sounds = utils.sounds
+
 local tictactoe = require('tictactoe')
 local ai = require('minimax')
+local makeButton = require('button')
 local players = tictactoe.players
 
 function love.load()
@@ -8,8 +14,18 @@ function love.load()
             restart = 0,
             aiPlay = 0
         },
+        state = {
+            menu = true,
+            playing = true,
+        },
         enemyIsAi = true,
     }
+
+    buttons = {
+        menu = {},
+        inGame = {},
+    }
+
     winner = ''
     cellsPlayed = 0
     MAX = players.MAX
@@ -31,16 +47,13 @@ function love.load()
         { '', '', '' },
     }
 
-    playSound = love.audio.newSource('assets/sound/ball_tap.wav', 'static')
-    winnerSound = love.audio.newSource('assets/sound/winner.wav', 'static')
-    tieSound = love.audio.newSource('assets/sound/draw.wav', 'static')
-
-    love.graphics.setBackgroundColor(153 / 255, 236 / 255, 247 / 255)
+    love.graphics.setBackgroundColor(utils.colorRGB(220, 244, 250))
     love.window.setMode(boardSize + 700, boardSize)
 end
 
 function love.mousepressed(x, y, button, _, _)
-    if (button == 1 and winner == '') and (not game.enemyIsAi or currentPlayer  == 'X') then
+    if (game.state.playing and button == 1 and winner == '') and
+        (not game.enemyIsAi or currentPlayer == 'X') then
         -- Calculate the row and column clicked
         local row = math.floor(y / cellSize) + 1
         local col = math.floor(x / cellSize) + 1
@@ -56,14 +69,14 @@ function love.mousepressed(x, y, button, _, _)
                 currentPlayer = 'X'
             end
 
-            love.audio.play(playSound)
+            love.audio.play(sounds.playSound)
             cellsPlayed = cellsPlayed + 1
         end
     end
 end
 
 function love.update(dt)
-    if cellsPlayed > 4 and not gameOver then
+    if game.state.playing and cellsPlayed > 4 and not gameOver then
         local offset = 27
         local base = (cellSize / 2) - 4
         if board[1][1] ~= '' and board[1][1] == board[2][2] and board[2][2] == board[3][3] then
@@ -99,13 +112,13 @@ function love.update(dt)
         end
 
         if winner ~= '' then
-            love.audio.play(winnerSound)
+            love.audio.play(sounds.winnerSound)
             gameOver = true
         elseif cellsPlayed == 9 then
-            love.audio.play(tieSound)
+            love.audio.play(sounds.tieSound)
             gameOver = true
         end
-    elseif gameOver then
+    elseif game.state.playing and gameOver then
         crossLine.progress = crossLine.progress + crossLine.speed * dt
         if crossLine.progress > 1 then
             crossLine.progress = 1
@@ -120,6 +133,7 @@ function love.update(dt)
         if game.timers.aiPlay > 0.75 then
             local move = ai.minimax(board, MIN, 0)
             board[move.row][move.col] = MIN
+            love.audio.play(sounds.playSound)
             currentPlayer = MAX
             cellsPlayed = cellsPlayed + 1
             game.timers.aiPlay = 0
@@ -128,6 +142,25 @@ function love.update(dt)
 end
 
 function love.draw()
+    if game.state.menu then
+        showMenu()
+    elseif game.state.playing then
+        playGame()
+    end
+end
+
+function showMenu()
+    game.state.playing = false
+    local titleX = 170
+    love.graphics.print({ colors.blue, 'TIC' }, fonts.squirk, titleX + 14, 70)
+    love.graphics.print({ colors.darkBlue, 'TAC' }, fonts.squirk, titleX, 300)
+    love.graphics.print({ colors.red, 'TOE' }, fonts.squirk, titleX, 530)
+
+    love.graphics.scale(0.5)
+    love.graphics.print({ colors.darkBlue, 'Play !' }, fonts.squirk, titleX + 1700, 300)
+end
+
+function playGame()
     local baseX = 67
     local baseO = 145
 
