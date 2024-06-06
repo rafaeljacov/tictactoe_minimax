@@ -5,26 +5,29 @@ local sounds = utils.sounds
 
 local tictactoe = require('tictactoe')
 local ai = require('minimax')
-local makeButton = require('button')
+local Button = require('button')
 local players = tictactoe.players
 
-function love.load()
-    game = {
-        timers = {
-            restart = 0,
-            aiPlay = 0
-        },
-        state = {
-            menu = true,
-            playing = true,
-        },
-        enemyIsAi = true,
-    }
+local buttons = {
+    menu = {},
+    inGame = {},
+}
 
-    buttons = {
-        menu = {},
-        inGame = {},
+local game = {}
+
+function love.load()
+    game.timers = {
+        restart = 0,
+        aiPlay = 0
     }
+    game.state = {
+        menu = true,
+        playing = false,
+    }
+    game.enemyIsAi = true
+
+    buttons.menu.vsPlayer = Button('VS PLAYER', colors.black, fonts.maldini_bold, 290, 110, 7, colors.blue)
+    buttons.menu.vsAI = Button('VS AI', colors.black, fonts.maldini_bold, 290, 110, 7, colors.red)
 
     winner = ''
     cellsPlayed = 0
@@ -52,7 +55,18 @@ function love.load()
 end
 
 function love.mousepressed(x, y, button, _, _)
-    if (game.state.playing and button == 1 and winner == '') and
+    if game.state.menu and button == 1 then
+        buttons.menu.vsPlayer:onclick(function()
+            game.enemyIsAi = false
+            game.state.menu = false
+            game.state.playing = true
+        end, x, y)
+        buttons.menu.vsAI:onclick(function()
+            game.enemyIsAi = true
+            game.state.menu = false
+            game.state.playing = true
+        end, x, y)
+    elseif (game.state.playing and button == 1 and winner == '') and
         (not game.enemyIsAi or currentPlayer == 'X') then
         -- Calculate the row and column clicked
         local row = math.floor(y / cellSize) + 1
@@ -69,74 +83,76 @@ function love.mousepressed(x, y, button, _, _)
                 currentPlayer = 'X'
             end
 
-            love.audio.play(sounds.playSound)
+            love.audio.play(sounds.play)
             cellsPlayed = cellsPlayed + 1
         end
     end
 end
 
 function love.update(dt)
-    if game.state.playing and cellsPlayed > 4 and not gameOver then
-        local offset = 27
-        local base = (cellSize / 2) - 4
-        if board[1][1] ~= '' and board[1][1] == board[2][2] and board[2][2] == board[3][3] then
-            winner = board[1][1]
-            crossLine.start.x = offset
-            crossLine.start.y = offset
-            crossLine.finish.x = boardSize - offset
-            crossLine.finish.y = boardSize - offset
-        elseif board[1][3] ~= '' and board[1][3] == board[2][2] and board[2][2] == board[3][1] then
-            winner = board[1][3]
-            crossLine.start.x = boardSize - offset
-            crossLine.start.y = offset
-            crossLine.finish.x = offset
-            crossLine.finish.y = boardSize - offset
-        else
-            for i = 1, #board do
-                if board[i][1] ~= '' and board[i][1] == board[i][2] and board[i][2] == board[i][3] then
-                    winner = board[i][1]
-                    crossLine.start.x = offset
-                    crossLine.start.y = base + (i - 1) * cellSize
-                    crossLine.finish.x = boardSize - offset
-                    crossLine.finish.y = base + (i - 1) * cellSize
-                    break
-                elseif board[1][i] ~= '' and board[1][i] == board[2][i] and board[2][i] == board[3][i] then
-                    winner = board[1][i]
-                    crossLine.start.x = base + (i - 1) * cellSize
-                    crossLine.start.y = offset
-                    crossLine.finish.x = base + (i - 1) * cellSize
-                    crossLine.finish.y = boardSize - offset
-                    break
+    if game.state.playing then
+        if cellsPlayed > 4 and not gameOver then
+            local offset = 27
+            local base = (cellSize / 2) - 4
+            if board[1][1] ~= '' and board[1][1] == board[2][2] and board[2][2] == board[3][3] then
+                winner = board[1][1]
+                crossLine.start.x = offset
+                crossLine.start.y = offset
+                crossLine.finish.x = boardSize - offset
+                crossLine.finish.y = boardSize - offset
+            elseif board[1][3] ~= '' and board[1][3] == board[2][2] and board[2][2] == board[3][1] then
+                winner = board[1][3]
+                crossLine.start.x = boardSize - offset
+                crossLine.start.y = offset
+                crossLine.finish.x = offset
+                crossLine.finish.y = boardSize - offset
+            else
+                for i = 1, #board do
+                    if board[i][1] ~= '' and board[i][1] == board[i][2] and board[i][2] == board[i][3] then
+                        winner = board[i][1]
+                        crossLine.start.x = offset
+                        crossLine.start.y = base + (i - 1) * cellSize
+                        crossLine.finish.x = boardSize - offset
+                        crossLine.finish.y = base + (i - 1) * cellSize
+                        break
+                    elseif board[1][i] ~= '' and board[1][i] == board[2][i] and board[2][i] == board[3][i] then
+                        winner = board[1][i]
+                        crossLine.start.x = base + (i - 1) * cellSize
+                        crossLine.start.y = offset
+                        crossLine.finish.x = base + (i - 1) * cellSize
+                        crossLine.finish.y = boardSize - offset
+                        break
+                    end
                 end
             end
+
+            if winner ~= '' then
+                love.audio.play(sounds.win)
+                gameOver = true
+            elseif cellsPlayed == 9 then
+                love.audio.play(sounds.tie)
+                gameOver = true
+            end
+        elseif gameOver then
+            crossLine.progress = crossLine.progress + crossLine.speed * dt
+            if crossLine.progress > 1 then
+                crossLine.progress = 1
+            end
+            restartGame(dt)
         end
 
-        if winner ~= '' then
-            love.audio.play(sounds.winnerSound)
-            gameOver = true
-        elseif cellsPlayed == 9 then
-            love.audio.play(sounds.tieSound)
-            gameOver = true
-        end
-    elseif game.state.playing and gameOver then
-        crossLine.progress = crossLine.progress + crossLine.speed * dt
-        if crossLine.progress > 1 then
-            crossLine.progress = 1
-        end
-        restartGame(dt)
-    end
+        -- AI Playing
+        if game.enemyIsAi and currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
+            game.timers.aiPlay = game.timers.aiPlay + dt
 
-    -- AI Playing
-    if game.enemyIsAi and currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
-        game.timers.aiPlay = game.timers.aiPlay + dt
-
-        if game.timers.aiPlay > 0.75 then
-            local move = ai.minimax(board, MIN, 0)
-            board[move.row][move.col] = MIN
-            love.audio.play(sounds.playSound)
-            currentPlayer = MAX
-            cellsPlayed = cellsPlayed + 1
-            game.timers.aiPlay = 0
+            if game.timers.aiPlay > 0.75 then
+                local move = ai.minimax(board, MIN, 0)
+                board[move.row][move.col] = MIN
+                love.audio.play(sounds.play)
+                currentPlayer = MAX
+                cellsPlayed = cellsPlayed + 1
+                game.timers.aiPlay = 0
+            end
         end
     end
 end
@@ -150,14 +166,19 @@ function love.draw()
 end
 
 function showMenu()
-    game.state.playing = false
-    local titleX = 170
-    love.graphics.print({ colors.blue, 'TIC' }, fonts.squirk, titleX + 14, 70)
-    love.graphics.print({ colors.darkBlue, 'TAC' }, fonts.squirk, titleX, 300)
-    love.graphics.print({ colors.red, 'TOE' }, fonts.squirk, titleX, 530)
+    love.graphics.setColor(1, 1, 1)
+    buttons.menu.vsPlayer:draw(945, 400, 25, 35)
+    buttons.menu.vsAI:draw(945, 550, 80, 35)
 
-    love.graphics.scale(0.5)
-    love.graphics.print({ colors.darkBlue, 'Play !' }, fonts.squirk, titleX + 1700, 300)
+    local titleX = 170
+    -- Reset colors
+    love.graphics.setColor(1, 1, 1)
+
+    love.graphics.print({ colors.blue, 'TIC' }, fonts.squirk_xl, titleX + 14, 70)
+    love.graphics.print({ colors.darkBlue, 'TAC' }, fonts.squirk_xl, titleX, 300)
+    love.graphics.print({ colors.red, 'TOE' }, fonts.squirk_xl, titleX, 530)
+
+    love.graphics.print({ colors.darkBlue, 'Play !' }, fonts.squirk_l, titleX + 727, 160)
 end
 
 function playGame()
