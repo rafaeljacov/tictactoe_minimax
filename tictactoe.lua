@@ -17,6 +17,7 @@ function tictactoe.X(x, y)
 
     love.graphics.line(x, y, x + offset, y + offset)
     love.graphics.line(x + offset, y, x, y + offset)
+    love.graphics.setColor(1, 1, 1)
 end
 
 -- draw O
@@ -25,11 +26,12 @@ function tictactoe.O(x, y)
     love.graphics.setLineWidth(37)
 
     love.graphics.circle('line', x, y, 80)
+    love.graphics.setColor(1, 1, 1)
 end
 
 function tictactoe.crossWin(start, finish)
     love.graphics.setLineWidth(20)
-    love.graphics.setColor(utils.colorRGB(34, 43, 54))
+    love.graphics.setColor(utils.colors.black[1], utils.colors.black[2], utils.colors.black[3])
 
     local currentX = start.x + (finish.x - start.x) * crossLine.progress
     local currentY = start.y + (finish.y - start.y) * crossLine.progress

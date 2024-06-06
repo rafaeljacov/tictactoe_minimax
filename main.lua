@@ -24,12 +24,18 @@ function love.load()
         menu = true,
         playing = false,
     }
+    game.scores = {
+        tie = 0,
+        x = 0,
+        o = 0
+    }
     game.enemyIsAi = true
 
     buttons.menu.vsPlayer = Button('vs Player', colors.black, fonts.maldini_bold_m, 300, 110, 7, colors.blue)
     buttons.menu.vsAI = Button('vs Bot', colors.black, fonts.maldini_bold_m, 300, 110, 7, colors.red)
     buttons.menu.quit = Button('Quit', colors.white, fonts.maldini_bold_m, 300, 90, 7, colors.darkBlue)
-    buttons.inGame.returnTitle = Button('Return to Screen Title', colors.black, fonts.maldini_bold_m, 620, 90, 7, colors.red)
+    buttons.inGame.returnTitle = Button('Return to Screen Title', colors.black, fonts.maldini_bold_m, 620, 90, 7,
+        colors.red)
 
     winner = ''
     cellsPlayed = 0
@@ -91,12 +97,17 @@ function love.mousepressed(x, y, button, _, _)
             cellsPlayed = cellsPlayed + 1
         end
 
-        buttons.inGame.returnTitle:onclick(function ()
+        buttons.inGame.returnTitle:onclick(function()
             game.state.menu = true
             game.state.playing = false
 
-            round = 1
+            for score in pairs(game.scores) do
+                game.scores[score] = 0
+            end
+
             currentPlayer = 'X'
+            restartGame(3)
+            round = 1
         end, x, y)
     end
 end
@@ -141,9 +152,17 @@ function love.update(dt)
             if winner ~= '' then
                 love.audio.play(sounds.win)
                 gameOver = true
+
+                if winner == 'X' then
+                    game.scores.x = game.scores.x + 1
+                elseif winner == 'O' then
+                    game.scores.o = game.scores.o + 1
+                end
             elseif cellsPlayed == 9 then
                 love.audio.play(sounds.tie)
                 gameOver = true
+
+                game.scores.tie = game.scores.tie + 1
             end
         elseif gameOver then
             crossLine.progress = crossLine.progress + crossLine.speed * dt
@@ -181,9 +200,6 @@ function showMenu()
     buttons.menu.vsPlayer:draw(940, 370, 40, 32)
     buttons.menu.vsAI:draw(940, 510, 70, 32)
     buttons.menu.quit:draw(940, 660, 101, 21)
-
-    -- Reset colors
-    love.graphics.setColor(1, 1, 1)
 
     local titleX = 170
     love.graphics.print({ colors.blue, 'TIC' }, fonts.squirk_xl, titleX + 14, 70)
@@ -226,10 +242,71 @@ end
 
 function displayGameStats()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print({ colors.darkBlue, 'Round' }, fonts.squirk_m, 930, 20)
-    love.graphics.print({ colors.darkBlue, round }, fonts.maldini_bold_l, 1175, 28)
+    love.graphics.print({ colors.blue, 'Round' }, fonts.squirk_m, 930, 20)
+    love.graphics.print({ colors.red, round }, fonts.maldini_bold_l, 1175, 28)
 
+    -- return button
     buttons.inGame.returnTitle:draw(942, 780, 50, 22)
+
+    if not gameOver then
+        -- Current Player playing
+        love.graphics.print({ colors.darkBlue, 'Playing...' }, fonts.maldini_bold_l, 1140, 160)
+        love.graphics.scale(0.7)
+
+        if currentPlayer == 'X' then
+            tictactoe.X(1710, 430)
+        else
+            tictactoe.O(1790, 510)
+        end
+    else
+        love.graphics.scale(0.8)
+        if winner == 'X' then
+            tictactoe.X(1270, 230)
+            love.graphics.print({ colors.darkBlue, 'Wins !' }, fonts.squirk_l, 1490, 235)
+        elseif winner == 'O' then
+            tictactoe.O(1345, 310)
+            love.graphics.print({ colors.darkBlue, 'Wins !' }, fonts.squirk_l, 1490, 235)
+        else
+            -- love.graphics.scale(1.5)
+            love.graphics.print({ colors.darkBlue, 'Draw !' }, fonts.squirk_l, 1350, 235)
+        end
+    end
+
+    -- Reset transformations
+    love.graphics.origin()
+
+    -- Scoreboard
+    love.graphics.print({ colors.darkBlue, 'TIE' }, fonts.maldini_bold_m, 1220, 530)
+    love.graphics.setLineWidth(4)
+    love.graphics.setColor(colors.darkBlue[1], colors.darkBlue[2], colors.darkBlue[3])
+    love.graphics.rectangle("line", 942, 495, 622, 220, 7)
+
+    local offset = 17
+    local score_x = 1045
+    if game.scores.x > 9 then
+        score_x = score_x - offset
+    end
+
+    local score_tie = 1235
+    if game.scores.tie > 9 then
+        score_tie = score_tie - offset
+    end
+
+    local score_o = 1425
+    if game.scores.o > 9 then
+        score_o = score_o - offset
+    end
+
+    love.graphics.print({ colors.black, game.scores.x}, fonts.maldini_bold_l, score_x, 620)
+    love.graphics.print({ colors.black, game.scores.tie}, fonts.maldini_bold_l, score_tie, 620)
+    love.graphics.print({ colors.black, game.scores.o}, fonts.maldini_bold_l, score_o, 620)
+
+    love.graphics.scale(0.37)
+    tictactoe.X(2795, 1415)
+    tictactoe.O(3900, 1500)
+
+    -- Reset transformations
+    love.graphics.origin()
 end
 
 function restartGame(dt)

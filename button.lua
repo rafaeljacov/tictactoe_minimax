@@ -39,6 +39,9 @@ function Button(text, color, font, width, height, radius, bg)
 
             love.graphics.setColor(1, 1, 1)
             love.graphics.print({ color, self.text }, self.font, self.tx, self.ty)
+
+            -- Reset colors
+            love.graphics.setColor(1, 1, 1)
         end
     }
 end
