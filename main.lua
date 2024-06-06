@@ -1,11 +1,11 @@
-local utils = require('utils')
+local utils = require('src.utils')
 local colors = utils.colors
 local fonts = utils.fonts
 local sounds = utils.sounds
 
-local tictactoe = require('tictactoe')
-local ai = require('minimax')
-local Button = require('button')
+local tictactoe = require('src.tictactoe')
+local ai = require('src.minimax')
+local Button = require('src.button')
 local players = tictactoe.players
 
 local buttons = {

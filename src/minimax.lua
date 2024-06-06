@@ -1,5 +1,5 @@
 ---@diagnostic disable: cast-local-type
-local players = require('tictactoe').players
+local players = require('src.tictactoe').players
 
 local ai = {}
 

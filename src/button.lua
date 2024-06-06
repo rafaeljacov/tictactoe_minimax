@@ -1,4 +1,4 @@
-local utils = require('utils')
+local utils = require('src.utils')
 function Button(text, color, font, width, height, radius, bg)
     return {
         text = text or 'Button',
