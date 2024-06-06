@@ -101,6 +101,7 @@ function love.mousepressed(x, y, button, _, _)
             game.state.menu = true
             game.state.playing = false
 
+            -- Reset Scores
             for score in pairs(game.scores) do
                 game.scores[score] = 0
             end
@@ -267,7 +268,6 @@ function displayGameStats()
             tictactoe.O(1345, 310)
             love.graphics.print({ colors.darkBlue, 'Wins !' }, fonts.squirk_l, 1490, 235)
         else
-            -- love.graphics.scale(1.5)
             love.graphics.print({ colors.darkBlue, 'Draw !' }, fonts.squirk_l, 1350, 235)
         end
     end
