@@ -12,7 +12,6 @@ return {
         squirk_m = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 80),
         maldini_bold_l = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 80),
         maldini_bold_m = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 60),
-        maldini_regular_m = love.graphics.newFont('assets/fonts/MaldiniNormal-ZVKG3.ttf', 60)
     },
     sounds = {
         play = love.audio.newSource('assets/sound/ball_tap.wav', 'static'),
