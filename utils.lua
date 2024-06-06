@@ -3,13 +3,16 @@ return {
         red = { 222 / 255, 43 / 255, 43 / 255 },
         blue = { 43 / 255, 164 / 255, 227 / 255 },
         darkBlue = { 33 / 255, 50 / 255, 92 / 255 },
-        black = { 10 / 255, 15 / 255, 28 / 255 }
+        black = { 10 / 255, 15 / 255, 28 / 255 },
+        white = { 233 / 255, 236 / 255, 242 / 255 }
     },
     fonts = {
         squirk_xl = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 270),
         squirk_l = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 160),
-        maldini_bold = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 60),
-        maldini_regular = love.graphics.newFont('assets/fonts/MaldiniNormal-ZVKG3.ttf', 60)
+        squirk_m = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 80),
+        maldini_bold_l = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 80),
+        maldini_bold_m = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 60),
+        maldini_regular_m = love.graphics.newFont('assets/fonts/MaldiniNormal-ZVKG3.ttf', 60)
     },
     sounds = {
         play = love.audio.newSource('assets/sound/ball_tap.wav', 'static'),

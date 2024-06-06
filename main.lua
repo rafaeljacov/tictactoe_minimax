@@ -26,11 +26,14 @@ function love.load()
     }
     game.enemyIsAi = true
 
-    buttons.menu.vsPlayer = Button('VS PLAYER', colors.black, fonts.maldini_bold, 290, 110, 7, colors.blue)
-    buttons.menu.vsAI = Button('VS AI', colors.black, fonts.maldini_bold, 290, 110, 7, colors.red)
+    buttons.menu.vsPlayer = Button('vs Player', colors.black, fonts.maldini_bold_m, 300, 110, 7, colors.blue)
+    buttons.menu.vsAI = Button('vs Bot', colors.black, fonts.maldini_bold_m, 300, 110, 7, colors.red)
+    buttons.menu.quit = Button('Quit', colors.white, fonts.maldini_bold_m, 300, 90, 7, colors.darkBlue)
+    buttons.inGame.returnTitle = Button('Return to Screen Title', colors.black, fonts.maldini_bold_m, 620, 90, 7, colors.red)
 
     winner = ''
     cellsPlayed = 0
+    round = 1
     MAX = players.MAX
     MIN = players.MIN
     currentPlayer = 'X'
@@ -66,6 +69,7 @@ function love.mousepressed(x, y, button, _, _)
             game.state.menu = false
             game.state.playing = true
         end, x, y)
+        buttons.menu.quit:onclick(love.event.quit, x, y)
     elseif (game.state.playing and button == 1 and winner == '') and
         (not game.enemyIsAi or currentPlayer == 'X') then
         -- Calculate the row and column clicked
@@ -86,6 +90,14 @@ function love.mousepressed(x, y, button, _, _)
             love.audio.play(sounds.play)
             cellsPlayed = cellsPlayed + 1
         end
+
+        buttons.inGame.returnTitle:onclick(function ()
+            game.state.menu = true
+            game.state.playing = false
+
+            round = 1
+            currentPlayer = 'X'
+        end, x, y)
     end
 end
 
@@ -166,26 +178,27 @@ function love.draw()
 end
 
 function showMenu()
-    love.graphics.setColor(1, 1, 1)
-    buttons.menu.vsPlayer:draw(945, 400, 25, 35)
-    buttons.menu.vsAI:draw(945, 550, 80, 35)
+    buttons.menu.vsPlayer:draw(940, 370, 40, 32)
+    buttons.menu.vsAI:draw(940, 510, 70, 32)
+    buttons.menu.quit:draw(940, 660, 101, 21)
 
-    local titleX = 170
     -- Reset colors
     love.graphics.setColor(1, 1, 1)
 
+    local titleX = 170
     love.graphics.print({ colors.blue, 'TIC' }, fonts.squirk_xl, titleX + 14, 70)
     love.graphics.print({ colors.darkBlue, 'TAC' }, fonts.squirk_xl, titleX, 300)
     love.graphics.print({ colors.red, 'TOE' }, fonts.squirk_xl, titleX, 530)
 
-    love.graphics.print({ colors.darkBlue, 'Play !' }, fonts.squirk_l, titleX + 727, 160)
+    love.graphics.print({ colors.darkBlue, 'Play !' }, fonts.squirk_l, titleX + 727, 120)
 end
 
 function playGame()
     local baseX = 67
     local baseO = 145
 
-    love.graphics.setColor(0, 0, 0)
+    r, g, b = colors.darkBlue[1], colors.darkBlue[2], colors.darkBlue[3]
+    love.graphics.setColor(r, g, b)
     love.graphics.setLineWidth(7)
 
     -- Dividers
@@ -208,6 +221,15 @@ function playGame()
     if gameOver then
         tictactoe.crossWin(crossLine.start, crossLine.finish)
     end
+    displayGameStats()
+end
+
+function displayGameStats()
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print({ colors.darkBlue, 'Round' }, fonts.squirk_m, 930, 20)
+    love.graphics.print({ colors.darkBlue, round }, fonts.maldini_bold_l, 1175, 28)
+
+    buttons.inGame.returnTitle:draw(942, 780, 50, 22)
 end
 
 function restartGame(dt)
@@ -215,6 +237,7 @@ function restartGame(dt)
     if game.timers.restart > 2 then
         winner = ''
         cellsPlayed = 0
+        round = round + 1
         gameOver = false
         crossLine.start.x = 0
         crossLine.start.y = 0
