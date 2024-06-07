@@ -10,8 +10,10 @@ return {
         squirk_xl = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 270),
         squirk_l = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 160),
         squirk_m = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 80),
+        squirk_s = love.graphics.newFont('assets/fonts/Squirk-RMvV.ttf', 50),
         maldini_bold_l = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 80),
         maldini_bold_m = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 60),
+        maldini_bold_s = love.graphics.newFont('assets/fonts/MaldiniBold-OVZO6.ttf', 36),
     },
     sounds = {
         play = love.audio.newSource('assets/sound/ball_tap.wav', 'static'),
