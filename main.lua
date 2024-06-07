@@ -14,6 +14,7 @@ local buttons = {
 }
 
 local game = {}
+local bot = {}
 
 function love.load()
     game.timers = {
@@ -30,6 +31,13 @@ function love.load()
         o = 0
     }
     game.enemyIsAi = true
+    bot.difficulties = {
+        'Beginner',
+        'Medium',
+        'Hard',
+        'Impossible'
+    }
+    bot.difficulty = 1
 
     buttons.menu.vsPlayer = Button('vs Player', colors.black, fonts.maldini_bold_m, 300, 110, 7, colors.blue)
     buttons.menu.vsAI = Button('vs Bot', colors.black, fonts.maldini_bold_m, 300, 110, 7, colors.red)
@@ -65,6 +73,12 @@ end
 
 function love.mousepressed(x, y, button, _, _)
     if game.state.menu and button == 1 then
+        buttons.menu.difficulty:onclick(function()
+            bot.difficulty = bot.difficulty + 1
+            if bot.difficulty > 4 then
+                bot.difficulty = 1
+            end
+        end, x, y)
         buttons.menu.vsPlayer:onclick(function()
             game.enemyIsAi = false
             game.state.menu = false
@@ -114,6 +128,9 @@ function love.mousepressed(x, y, button, _, _)
 end
 
 function love.update(dt)
+    buttons.menu.difficulty = Button(bot.difficulties[bot.difficulty], colors.black, fonts.maldini_bold_s, 200, 50, 4,
+        colors.red)
+
     if game.state.playing then
         if cellsPlayed > 4 and not gameOver then
             local offset = 27
@@ -176,9 +193,25 @@ function love.update(dt)
         -- AI Playing
         if game.enemyIsAi and currentPlayer == MIN and winner == '' and cellsPlayed < 9 then
             game.timers.aiPlay = game.timers.aiPlay + dt
+            local playMinimax = true
+            math.randomseed(os.time())
+            local randomPlayChance = math.random(1, 100)
 
             if game.timers.aiPlay > 0.75 then
-                local move = ai.minimax(board, MIN, 0)
+                if bot.difficulty == 1 and randomPlayChance <= 70 then
+                    playMinimax = false
+                elseif bot.difficulty == 2 and randomPlayChance <= 50 then
+                    playMinimax = false
+                elseif bot.difficulty == 3 and randomPlayChance <= 20 then
+                    playMinimax = false
+                end
+
+                local move
+                if playMinimax then
+                    move = ai.minimax(board, MIN, 0)
+                else
+                    move = ai.playRandom(board)
+                end
                 board[move.row][move.col] = MIN
                 love.audio.play(sounds.play)
                 currentPlayer = MAX
@@ -198,9 +231,20 @@ function love.draw()
 end
 
 function showMenu()
+    love.graphics.print({ colors.darkBlue, 'Bot:' }, fonts.squirk_s, 1280, 840)
+    local difficulty_x = 36
+    if bot.difficulty == 2 then
+        difficulty_x = difficulty_x + 8
+    elseif bot.difficulty == 3 then
+        difficulty_x = difficulty_x + 25
+    elseif bot.difficulty == 4 then
+        difficulty_x = difficulty_x - 10
+    end
+    buttons.menu.difficulty:draw(1390, 840, difficulty_x, 11)
     buttons.menu.vsPlayer:draw(940, 370, 40, 32)
     buttons.menu.vsAI:draw(940, 510, 70, 32)
     buttons.menu.quit:draw(940, 660, 101, 21)
+
 
     local titleX = 170
     love.graphics.print({ colors.blue, 'TIC' }, fonts.squirk_xl, titleX + 14, 70)
@@ -297,9 +341,9 @@ function displayGameStats()
         score_o = score_o - offset
     end
 
-    love.graphics.print({ colors.black, game.scores.x}, fonts.maldini_bold_l, score_x, 620)
-    love.graphics.print({ colors.black, game.scores.tie}, fonts.maldini_bold_l, score_tie, 620)
-    love.graphics.print({ colors.black, game.scores.o}, fonts.maldini_bold_l, score_o, 620)
+    love.graphics.print({ colors.black, game.scores.x }, fonts.maldini_bold_l, score_x, 620)
+    love.graphics.print({ colors.black, game.scores.tie }, fonts.maldini_bold_l, score_tie, 620)
+    love.graphics.print({ colors.black, game.scores.o }, fonts.maldini_bold_l, score_o, 620)
 
     love.graphics.scale(0.37)
     tictactoe.X(2795, 1415)

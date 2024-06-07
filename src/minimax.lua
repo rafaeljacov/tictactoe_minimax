@@ -6,7 +6,7 @@ local ai = {}
 local MAX = players.MAX
 local MIN = players.MIN
 
-local function getMoves(board)
+function getMoves(board)
     local moves = {}
     for i = 1, 3 do
         for j = 1, 3 do
@@ -124,6 +124,14 @@ function ai.minimax(board, player, depth)
             return bestMove
         end
     end
+end
+
+function ai.playRandom(board)
+    math.randomseed(os.time())
+    local moves = getMoves(board)
+    local selectMove = math.random(1, #moves)
+
+    return moves[selectMove]
 end
 
 return ai
