@@ -31,8 +31,8 @@ echo 'Copying .dll and license files...'
 cp $love_exe_path/*.dll $love_exe_path/license.txt 'dist/tmp'
 echo 'Done!'
 
-echo 'Building TicTacToe.exe...'
-cat $love_exe_path/love.exe './dist/tictactoe.love' > 'dist/tmp/TicTacToe.exe'
+echo 'Building tictactoe.exe'
+cat $love_exe_path/love.exe './dist/tictactoe.love' > 'dist/tmp/tictactoe.exe'
 echo 'Done!'
 
 echo 'Compressing to windows-64 zip...'
