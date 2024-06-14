@@ -35,6 +35,7 @@ echo 'Done!'
 echo 'Compressing to windows-64 zip...'
 cd 'dist/tmp'
 zip -r '../tictactoe_win64.zip' .
+cd -
 rm -rf 'dist/tmp'
 echo 'Done!\n'
 
