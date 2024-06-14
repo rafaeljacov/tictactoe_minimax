@@ -68,7 +68,6 @@ function love.load()
     }
 
     love.graphics.setBackgroundColor(utils.colorRGB(220, 244, 250))
-    love.window.setMode(boardSize + 700, boardSize)
 end
 
 function love.mousepressed(x, y, button, _, _)
