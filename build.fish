@@ -21,7 +21,7 @@ end
 set filename (status current-filename)
 
 echo 'Building .love package...'
-zip -r -9 dist/tictactoe.love . -x $filename -x ".git/*" -x .gitignore -x tictactoe.love
+zip -r -9 dist/tictactoe.love . -x $filename -x ".git/*" -x .gitignore
 echo 'Done!'
 
 echo 'Copying .dll and license files...'
