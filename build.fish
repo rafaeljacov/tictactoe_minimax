@@ -14,9 +14,12 @@ end
 if test -d 'dist/'
     echo 'Removing existing dist files...'
     rm -rf 'dist/'
-    mkdir -p 'dist/tmp'
     echo 'Done!'
 end
+
+echo 'Making distribution directory...'
+mkdir -p 'dist/tmp'
+echo 'Done!'
 
 set filename (status current-filename)
 
